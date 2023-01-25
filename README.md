@@ -7,7 +7,7 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
-## Create project
+## Create project (using the docker container)
 
 * docker exec <container-name> sh -c "cd /var/www/html && composer create-project laravel/laravel <folder>"
 
