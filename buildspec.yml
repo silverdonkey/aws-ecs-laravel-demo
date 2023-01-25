@@ -14,7 +14,8 @@ phases:
       - ./ctl up -d && sleep 5
       - ./ctl composer install --no-interaction --prefer-dist --optimize-autoloader
       - ./ctl art key:generate --no-ansi
-      - ./ctl test
+      - ./ctl npm install
+      - ./ctl npm run dev && ./ctl test
   build:
     commands:
       - echo "TODO Build production image"
