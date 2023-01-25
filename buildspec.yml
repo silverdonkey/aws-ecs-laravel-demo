@@ -7,7 +7,7 @@ phases:
       - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
   pre_build:
     commands:
-      - - echo "Docker pull from ECR"
+      - echo "Docker pull from ECR"
       - docker pull $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/myshippingdocker/$ENVIRONMENT-base-image:latest
       - docker tag $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/myshippingdocker/$ENVIRONMENT-base-image:latest aws-ecs-laravel-demo/app:latest
       - cp .env.ci .env
