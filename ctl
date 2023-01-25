@@ -47,49 +47,25 @@ if [ $# -gt 0 ]; then
         shift 1
         $COMPOSE run --rm $TTY \
             -w /var/www/html \
-            app \
             php artisan "$@"
 
     elif [ "$1" == "composer" ] || [ "$1" == "comp" ]; then
         shift 1
         $COMPOSE run --rm $TTY \
             -w /var/www/html \
-            app \
             composer "$@"
 
     elif [ "$1" == "test" ]; then
         shift 1
         $COMPOSE run --rm $TTY \
             -w /var/www/html \
-            app \
             ./vendor/bin/phpunit "$@"
 
     elif [ "$1" == "t" ]; then
         shift 1
         $COMPOSE exec \
-            app \
             sh -c "cd /var/www/html && ./vendor/bin/phpunit $@"
 
-    elif [ "$1" == "npm" ]; then
-        shift 1
-        $COMPOSE run --rm $TTY \
-            -w /var/www/html \
-            node \
-            npm "$@"
-
-    elif [ "$1" == "yarn" ]; then
-        shift 1
-        $COMPOSE run --rm $TTY \
-            -w /var/www/html \
-            node \
-            yarn "$@"
-
-    elif [ "$1" == "gulp" ]; then
-        shift 1
-        $COMPOSE run --rm $TTY \
-            -w /var/www/html \
-            node \
-            ./node_modules/.bin/gulp "$@"
     else
         $COMPOSE "$@"
     fi
