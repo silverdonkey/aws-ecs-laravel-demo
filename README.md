@@ -8,7 +8,6 @@
 </p>
 
 ## Create project (using the docker container)
-
 * docker exec <container-name> sh -c "cd /var/www/html && composer create-project laravel/laravel <folder>"
 
 Local Dev: ( optional ) login to docker instance an run commands directly or use the ./ctl script
