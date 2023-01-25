@@ -39,7 +39,12 @@ if [ $# -gt 0 ]; then
         $COMPOSE run --rm \
             node \
             npm "$@"
-
+    elif [ "$1" == "push" ]; then
+        shift 1
+        source ./docker/.secrets
+        dock-aws --profile $AWS_PROFILE ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
+        docker tag aws-ecs-laravel-demo/app:latest $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/myshippingdocker/$1-base-image:latest
+        docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/myshippingdocker/$1-base-image:latest
     else
         $COMPOSE "$@"
     fi
