@@ -11,6 +11,19 @@ export DB_USERNAME=${DB_USERNAME:-homestead}
 export DB_PASSWORD=${DB_PASSWORD:-secret}
 
 
+# Default pseudo-TTY allocation for dev
+# like the '-it' option for docker (docker-compose does not have the '-it')
+TTY=""
+
+# Then we update it to use the docker-compose.ci.yml file
+# if we're running in a GitHub Action
+if [ ! -z "$CODEBUILD_BUILD_ID" ] || [ ! -z "$GITHUB_RUN_NUMBER" ]; then
+    COMPOSE_FILE="ci"
+    # Disable pseudo-TTY allocation for CI (Jenkins)
+    # e.g. makes it non-interactive
+    TTY="-T"
+fi
+
 # Create docker-compose command to run
 COMPOSE="docker-compose"
 
@@ -18,19 +31,19 @@ if [ $# -gt 0 ]; then
 
     if [ "$1" == "artisan" ] || [ "$1" == "art" ]; then
         shift 1
-        $COMPOSE exec \
+        $COMPOSE exec $TTY \
             app \
             php artisan "$@"
 
     elif [ "$1" == "composer" ] || [ "$1" == "comp" ]; then
         shift 1
-        $COMPOSE exec \
+        $COMPOSE exec $TTY \
             app \
             composer "$@"
 
     elif [ "$1" == "test" ]; then
         shift 1
-        $COMPOSE exec \
+        $COMPOSE exec $TTY \
             app \
             ./vendor/bin/phpunit "$@"
 

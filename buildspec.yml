@@ -1,0 +1,23 @@
+version: 0.2
+run-as: root
+phases:
+  install:
+    commands:
+      - echo "Authenticate against ECR"
+      - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
+  pre_build:
+    commands:
+      - - echo "Docker pull from ECR"
+      - docker pull $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/myshippingdocker/$ENVIRONMENT-base-image:latest
+      - docker tag $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/myshippingdocker/$ENVIRONMENT-base-image:latest aws-ecs-laravel-demo/app:latest
+      - cp .env.ci .env
+      - ./ctl up -d && sleep 5
+      - ./ctl composer install --no-interaction --prefer-dist --optimize-autoloader
+      - ./ctl art key:generate --no-ansi
+      - ./ctl test
+  build:
+    commands:
+      - echo "TODO Build production image"
+  post_build:
+    commands:
+      - echo "TODO Push production image"
