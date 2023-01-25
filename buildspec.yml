@@ -11,9 +11,9 @@ phases:
       - docker pull $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/myshippingdocker/$ENVIRONMENT-base-image:latest
       - docker tag $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/myshippingdocker/$ENVIRONMENT-base-image:latest aws-ecs-laravel-demo/app:latest
       - cp .env.ci .env
-      - ./ctl up -d && sleep 60
+      - ./ctl up -d && sleep 10
       - ./ctl composer install --no-interaction --prefer-dist --optimize-autoloader
-      - ./ctl art key:generate --no-ansi && sleep 30
+      - ./ctl art key:generate --no-ansi
       - ./ctl test --testsuite=Unit
   build:
     commands:
