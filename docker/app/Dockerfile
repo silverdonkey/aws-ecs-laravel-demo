@@ -2,7 +2,7 @@
 
 FROM ubuntu:20.04 as base-image
 
-LABEL maintainer="chris@shippingdocker.com"
+LABEL maintainer="dev@niko-consulting.de"
 
 WORKDIR /var/www/html
 
