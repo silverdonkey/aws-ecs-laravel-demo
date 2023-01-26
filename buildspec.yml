@@ -17,7 +17,7 @@ phases:
       - ./ctl up -d && sleep 10
       - ./ctl composer install --no-interaction --prefer-dist --optimize-autoloader
       - ./ctl art key:generate --no-ansi
-      - ./ctl npm ci && ./ctl test #--testsuite=Unit
+      - ./ctl test --testsuite=Unit
   build:
     commands:
       - echo "TODO Build production image"

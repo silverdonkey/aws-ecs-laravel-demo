@@ -13,7 +13,7 @@ RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-COPY start-container /usr/local/bin/start-container
-RUN chmod +x /usr/local/bin/start-container
+#COPY start-container /usr/local/bin/start-container
+#RUN chmod +x /usr/local/bin/start-container
 
-ENTRYPOINT ["start-container"]
+#ENTRYPOINT ["start-container"]
