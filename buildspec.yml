@@ -17,10 +17,19 @@ phases:
       - ./ctl up -d && sleep 10
       - ./ctl composer install --no-interaction --prefer-dist --optimize-autoloader
       - ./ctl art key:generate --no-ansi
+      - ./ctl npm install
+      # - ./ctl npm run dev
       - ./ctl test --testsuite=Unit
   build:
     commands:
-      - echo "TODO Build production image"
+      - echo "Build prod image"
+      - ./ctl composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
+      - ./ctl npm run production
+      - git archive -o docker/app/aws-ecs-laravel-demo.zip --worktree-attributes $CODEBUILD_SOURCE_VERSION
+      - zip -urq docker/app/aws-ecs-laravel-demo.zip vendor public/mix-manifest.json public/css/app.css public/js/app.js
+      - ./ctl build-prod
   post_build:
     commands:
-      - echo "TODO Push production image"
+      - echo "Push prod image"
+      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/myshippingdocker/$ENVIRONMENT-app:latest
+      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/myshippingdocker/$ENVIRONMENT-app:$CODEBUILD_RESOLVED_SOURCE_VERSION
