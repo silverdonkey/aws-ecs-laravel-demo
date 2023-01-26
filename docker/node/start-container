@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+##
+# Run a command or start vite
+#
+if [ $# -gt 0 ];then
+    # If we passed a command, run it
+    exec "$@"
+else
+    # Otherwise start vite
+    npm run dev
+fi
