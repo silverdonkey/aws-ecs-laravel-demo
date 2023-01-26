@@ -45,3 +45,12 @@ RUN chmod +x /usr/local/bin/start-container
 EXPOSE 80
 
 ENTRYPOINT ["start-container"]
+
+
+FROM base-image as prod-image
+WORKDIR /var/www/html
+
+COPY aws-ecr-laravel-demo.zip aws-ecr-laravel-demo.zip
+RUN unzip -q aws-ecr-laravel-demo.zip \
+    && rm aws-ecr-laravel-demo.zip \
+    && chown -R www-data:www-data /var/www/html

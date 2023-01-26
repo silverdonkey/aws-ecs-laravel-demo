@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+set -e
+
+# Track current working dir, and then change into script directory
+CURRENT_DIR=$(pwd)
+cd "${0%/*}"
+
+# Build production image, tag with commit sha
+DOCKER_BUILDKIT=1 docker build \
+     --build-arg BUILDKIT_INLINE_CACHE=1 \
+     --cache-from aws-ecs-laravel-demo/app:latest \
+     -t $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/myshippingdocker/$ENVIRONMENT-app:$CODEBUILD_RESOLVED_SOURCE_VERSION \
+     -f app/Dockerfile \
+     app
+
+docker tag \
+    $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/myshippingdocker/$ENVIRONMENT-app:$CODEBUILD_RESOLVED_SOURCE_VERSION \
+    $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/myshippingdocker/$ENVIRONMENT-app:latest
+
+# Head back to original directory
+cd $CURRENT_DIR

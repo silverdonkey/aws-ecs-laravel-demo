@@ -7,20 +7,38 @@ phases:
       - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
   pre_build:
     commands:
-      - echo "Docker pull PROD-APP container from ECR"
+      - echo "Docker pull PROD-IMAGE container from ECR"
       - docker pull $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/myshippingdocker/$ENVIRONMENT-base-image:latest
       - docker tag $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/myshippingdocker/$ENVIRONMENT-base-image:latest aws-ecs-laravel-demo/app:latest
       - echo "Docker pull TEST-NODE container from ECR"
       - docker pull $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/myshippingdocker/test-node-image:latest
       - docker tag $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/myshippingdocker/test-node-image:latest aws-ecs-laravel-demo/node:latest
+      - echo "Docker pull REDIS container from ECR"
+      - docker pull $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/myshippingdocker/redis:alpine
+      - docker tag $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/myshippingdocker/redis:alpine redis:alpine
+      - echo "Docker pull MYSLQ container from ECR"
+      - docker pull $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/myshippingdocker/mysql:5.7
+      - docker tag $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/myshippingdocker/mysql:5.7 mysql:5.7
+      - echo "Copy env props for CI"
       - cp .env.ci .env
       - ./ctl up -d && sleep 10
       - ./ctl composer install --no-interaction --prefer-dist --optimize-autoloader
       - ./ctl art key:generate --no-ansi
+      - ./ctl npm install
+      # - ./ctl npm run dev
       - ./ctl test --testsuite=Unit
   build:
     commands:
-      - echo "TODO Build production image"
+      - echo "Build prod image"
+      - ./ctl composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
+      - ./ctl npm run build
+      - rm .env
+      - aws s3 cp s3://myshippingdocker-secrets/env-prod .env
+      - git archive -o docker/app/aws-ecr-laravel-demo.zip --worktree-attributes $CODEBUILD_SOURCE_VERSION
+      - zip -urq docker/app/aws-ecr-laravel-demo.zip .env vendor public/mix-manifest.json public/css/app.css public/js/app.js
+      - ./ctl build-prod
   post_build:
     commands:
-      - echo "TODO Push production image"
+      - echo "Push prod image"
+      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/myshippingdocker/$ENVIRONMENT-app:latest
+      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/myshippingdocker/$ENVIRONMENT-app:$CODEBUILD_RESOLVED_SOURCE_VERSION
