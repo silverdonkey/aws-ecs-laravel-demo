@@ -17,7 +17,7 @@ phases:
       - docker pull $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/myshippingdocker/redis:alpine
       - docker tag $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/myshippingdocker/redis:alpine redis:alpine
       - echo "Docker pull MYSLQ container from ECR"
-      - docker pull $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/myshippingdocker/myslq:5.7
+      - docker pull $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/myshippingdocker/mysql:5.7
       - docker tag $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/myshippingdocker/mysql:5.7 mysql:5.7
       - echo "Copy env props for CI"
       - cp .env.ci .env
