@@ -7,14 +7,18 @@ phases:
       - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
   pre_build:
     commands:
-      - echo "Docker pull from ECR"
+      - echo "Docker pull PROD-APP container from ECR"
       - docker pull $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/myshippingdocker/$ENVIRONMENT-base-image:latest
       - docker tag $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/myshippingdocker/$ENVIRONMENT-base-image:latest aws-ecs-laravel-demo/app:latest
+      - echo "Docker pull TEST-NODE container from ECR"
+      - docker pull $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/myshippingdocker/test-node-image:latest
+      - docker tag $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/myshippingdocker/test-node-image:latest aws-ecs-laravel-demo/node:latest
       - cp .env.ci .env
       - ./ctl up -d && sleep 10
       - ./ctl composer install --no-interaction --prefer-dist --optimize-autoloader
       - ./ctl art key:generate --no-ansi
-      - ./ctl test --testsuite=Unit
+      - ./ctl npm ci && sleep 10
+      - ./ctl test #--testsuite=Unit
   build:
     commands:
       - echo "TODO Build production image"
