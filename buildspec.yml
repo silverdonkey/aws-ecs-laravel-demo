@@ -13,6 +13,13 @@ phases:
       - echo "Docker pull TEST-NODE container from ECR"
       - docker pull $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/myshippingdocker/test-node-image:latest
       - docker tag $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/myshippingdocker/test-node-image:latest aws-ecs-laravel-demo/node:latest
+      - echo "Docker pull REDIS container from ECR"
+      - docker pull $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/myshippingdocker/redis:alpine
+      - docker tag $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/myshippingdocker/redis:alpine redis:alpine
+      - echo "Docker pull MYSLQ container from ECR"
+      - docker pull $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/myshippingdocker/myslq:5.7
+      - docker tag $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/myshippingdocker/mysql:5.7 mysql:5.7
+      - echo "Copy env props for CI"
       - cp .env.ci .env
       - ./ctl up -d && sleep 10
       - ./ctl composer install --no-interaction --prefer-dist --optimize-autoloader
