@@ -31,7 +31,7 @@ phases:
     commands:
       - echo $CODEBUILD_WEBHOOK_TRIGGER
       - ./docker/build
-  deploy:
+  post_build:
     commands:
       - echo "Deploy PROD"
      # - ./docker/deploy
