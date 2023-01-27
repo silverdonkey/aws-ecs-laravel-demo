@@ -25,7 +25,7 @@ phases:
       - ./ctl composer install --no-interaction --prefer-dist --optimize-autoloader
       - ./ctl art key:generate --no-ansi
       - ./ctl npm install
-      - sysctl -w fs.inotify.max_user_watches=524288 && ./ctl npm run dev -- --host
+      #- sysctl -w fs.inotify.max_user_watches=524288 && ./ctl npm run dev -- --host
       - ./ctl test #--testsuite=Unit
   build:
     commands:
