@@ -1,5 +1,4 @@
 FROM node:14
-#FROM public.ecr.aws/docker/library/node:14
 
 LABEL maintainer="dev@niko-consulting.de"
 

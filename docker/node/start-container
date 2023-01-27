@@ -8,5 +8,5 @@ if [ $# -gt 0 ];then
     exec "$@"
 else
     # Otherwise start vite
-    npm run dev -- --host
+    npm run dev --host
 fi

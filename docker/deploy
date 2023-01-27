@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+
+# @link https://github.com/aws/aws-cli/issues/3064
+# Assumes the following variables:
+# AWS_ACCOUNT_ID
+# AWS_REGION
+# ENVIRONMENT
+# CODEBUILD_RESOLVED_SOURCE_VERSION
+
+set -eo pipefail
+
+if [[ "$CODEBUILD_WEBHOOK_TRIGGER" != "branch/main" ]]; then
+    exit 0
+fi
+
+ECR_IMAGE="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/shippingdocker/${ENVIRONMENT}-app:${CODEBUILD_RESOLVED_SOURCE_VERSION}"
+
+TASK_DEFINITION=$(aws --region ${AWS_REGION} ecs describe-task-definition \
+    --task-definition "shippingdocker-${ENVIRONMENT}-app" \
+    --query '{  containerDefinitions: taskDefinition.containerDefinitions,
+                family: taskDefinition.family,
+                taskRoleArn: taskDefinition.taskRoleArn,
+                executionRoleArn: taskDefinition.executionRoleArn,
+                networkMode: taskDefinition.networkMode,
+                volumes: taskDefinition.volumes,
+                placementConstraints: taskDefinition.placementConstraints,
+                requiresCompatibilities: taskDefinition.requiresCompatibilities,
+                cpu: taskDefinition.cpu,
+                memory: taskDefinition.memory}' \
+    | jq -c --arg IMAGE "${ECR_IMAGE}" '.containerDefinitions[0].image = $IMAGE')
+
+UPDATED_TASK=$(aws --region us-east-2 ecs register-task-definition \
+    --cli-input-json "${TASK_DEFINITION}")
+
+NEW_REVISION=$(echo -n ${UPDATED_TASK} | jq '.taskDefinition.revision')
+
+REVISION_CONTENT='{\"version\": 0.0,\"Resources\": [{\"TargetService\": {\"Type\": \"AWS::ECS::Service\",\"Properties\": {\"TaskDefinition\": \"arn:aws:ecs:'"${AWS_REGION}"':'"${AWS_ACCOUNT_ID}"':task-definition/shippingdocker-'"${ENVIRONMENT}"'-app:'"${NEW_REVISION}"'\",\"LoadBalancerInfo\": {\"ContainerName\": \"shippingdocker-'"${ENVIRONMENT}"'-app\",\"ContainerPort\": 80},\"PlatformVersion\": \"1.4.0\"}}}]}'
+
+aws --region us-east-2 deploy create-deployment \
+    --application-name AppECS-shippingdocker-${ENVIRONMENT}-cluster-app \
+    --deployment-group-name DgpECS-shippingdocker-${ENVIRONMENT}-cluster-app \
+    --revision '{"revisionType": "AppSpecContent", "appSpecContent": {"content": "'"${REVISION_CONTENT}"'"}}'
