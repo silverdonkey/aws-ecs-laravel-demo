@@ -25,20 +25,13 @@ phases:
       - ./ctl composer install --no-interaction --prefer-dist --optimize-autoloader
       - ./ctl art key:generate --no-ansi
       - ./ctl npm install
-      # - ./ctl npm run dev
+      - ./ctl npm run dev
       - ./ctl test --testsuite=Unit
   build:
     commands:
-      - echo "Build prod image"
-      - ./ctl composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
-      - ./ctl npm run build
-      - rm .env
-      - aws s3 cp s3://myshippingdocker-secrets/env-prod .env
-      - git archive -o docker/app/aws-ecr-laravel-demo.zip --worktree-attributes $CODEBUILD_SOURCE_VERSION
-      - zip -urq docker/app/aws-ecr-laravel-demo.zip .env vendor public/mix-manifest.json public/css/app.css public/js/app.js
-      - ./ctl build-prod
-  post_build:
+      - echo $CODEBUILD_WEBHOOK_TRIGGER
+      - ./docker/build
+  deploy:
     commands:
-      - echo "Push prod image"
-      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/myshippingdocker/$ENVIRONMENT-app:latest
-      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/myshippingdocker/$ENVIRONMENT-app:$CODEBUILD_RESOLVED_SOURCE_VERSION
+      - echo "Deploy PROD"
+     # - ./docker/deploy

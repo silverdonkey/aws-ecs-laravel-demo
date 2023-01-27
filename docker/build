@@ -2,6 +2,33 @@
 
 set -e
 
+###
+# Assumes we're running from root of project
+#
+
+if [[ "$CODEBUILD_WEBHOOK_TRIGGER" != "branch/master" ]]; then
+    exit 0
+fi
+
+###
+## Install production assets, create project artifact
+###
+./ctl composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
+./ctl npm run build
+
+if [[ -f .env ]]; then
+    rm .env
+fi
+
+aws s3 cp s3://myshippingdocker-secrets/env-prod .env
+git archive -o docker/app/aws-ecr-laravel-demo.zip --worktree-attributes $CODEBUILD_SOURCE_VERSION
+zip -urq docker/app/aws-ecr-laravel-demo.zip .env vendor public/mix-manifest.json public/css/app.css public/js/app.js
+
+
+###
+## Build & Push Docker Images
+###
+
 # Track current working dir, and then change into script directory
 CURRENT_DIR=$(pwd)
 cd "${0%/*}"
@@ -20,3 +47,7 @@ docker tag \
 
 # Head back to original directory
 cd $CURRENT_DIR
+
+
+docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/myshippingdocker/$ENVIRONMENT-app:latest
+docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/myshippingdocker/$ENVIRONMENT-app:$CODEBUILD_RESOLVED_SOURCE_VERSION
