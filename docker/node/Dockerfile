@@ -12,8 +12,8 @@ RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-#RUN echo "fs.inotify.max_user_watches=524288" >> /etc/sysctl.conf
-#COPY start-container /usr/local/bin/start-container
-#RUN chmod +x /usr/local/bin/start-container
+RUN echo "fs.inotify.max_user_watches=524288" >> /etc/sysctl.conf
+COPY start-container /usr/local/bin/start-container
+RUN chmod +x /usr/local/bin/start-container
 
-#ENTRYPOINT ["start-container"]
+ENTRYPOINT ["start-container"]
