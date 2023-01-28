@@ -49,7 +49,7 @@ if [ $# -gt 0 ]; then
 
     elif [ "$1" == "npm" ]; then
         shift 1
-        $COMPOSE exec $TTY \
+        $COMPOSE run --rm \
             node \
             npm "$@"
     elif [ "$1" == "push" ]; then  # use: ./ctl push prod
