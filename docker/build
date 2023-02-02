@@ -14,7 +14,7 @@ fi
 ## Install production assets, create project artifact
 ###
 ./ctl composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
-./ctl npm run build
+./ctl npm install && ./ctl npm run build
 
 if [[ -f .env ]]; then
     rm .env
