@@ -26,7 +26,7 @@ phases:
       - ./ctl composer install --no-interaction --prefer-dist --optimize-autoloader
       - ./ctl art key:generate --no-ansi
       #- sysctl -w fs.inotify.max_user_watches=524288 && ./ctl npm run dev -- --host
-      - ./ctl test --testsuite=Unit
+      - ./ctl test #--testsuite=Unit
   build:
     commands:
       - echo $CODEBUILD_WEBHOOK_TRIGGER
