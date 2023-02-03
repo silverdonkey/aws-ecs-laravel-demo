@@ -34,4 +34,4 @@ phases:
   post_build:
     commands:
       - echo "Deploy PROD"
-      - ./docker/deploy
+      - aws ecs update-service --cluster demo-prod-cluster --service app --force-new-deployment
