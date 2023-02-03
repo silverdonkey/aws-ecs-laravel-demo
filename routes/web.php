@@ -26,3 +26,9 @@ Route::middleware([
         return view('dashboard');
     })->name('dashboard');
 });
+
+Route::get('log-test', function () {
+
+    throw new \Exception('foo bar');
+    return 'done';
+});

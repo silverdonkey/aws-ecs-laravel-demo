@@ -53,7 +53,7 @@ return [
     'channels' => [
         'stack' => [
             'driver' => 'stack',
-            'channels' => ['single'],
+            'channels' => ['single', 'stderr'],
             'ignore_exceptions' => false,
         ],
 
@@ -93,7 +93,9 @@ return [
             'driver' => 'monolog',
             'level' => env('LOG_LEVEL', 'debug'),
             'handler' => StreamHandler::class,
-            'formatter' => env('LOG_STDERR_FORMATTER'),
+            // 'formatter' => env('LOG_STDERR_FORMATTER'),
+            // Use a JSON formatter
+            'formatter' => Monolog\Formatter\JsonFormatter::class,
             'with' => [
                 'stream' => 'php://stderr',
             ],
