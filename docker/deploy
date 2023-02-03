@@ -9,14 +9,14 @@
 
 set -eo pipefail
 
-if [[ "$CODEBUILD_WEBHOOK_TRIGGER" != "branch/main" ]]; then
+if [[ "$CODEBUILD_WEBHOOK_TRIGGER" != "branch/master" ]]; then
     exit 0
 fi
 
-ECR_IMAGE="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/shippingdocker/${ENVIRONMENT}-app:${CODEBUILD_RESOLVED_SOURCE_VERSION}"
+ECR_IMAGE="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/myshippingdocker/${ENVIRONMENT}-app:${CODEBUILD_RESOLVED_SOURCE_VERSION}"
 
 TASK_DEFINITION=$(aws --region ${AWS_REGION} ecs describe-task-definition \
-    --task-definition "shippingdocker-${ENVIRONMENT}-app" \
+    --task-definition "lara-${ENVIRONMENT}-app" \
     --query '{  containerDefinitions: taskDefinition.containerDefinitions,
                 family: taskDefinition.family,
                 taskRoleArn: taskDefinition.taskRoleArn,
@@ -29,14 +29,14 @@ TASK_DEFINITION=$(aws --region ${AWS_REGION} ecs describe-task-definition \
                 memory: taskDefinition.memory}' \
     | jq -c --arg IMAGE "${ECR_IMAGE}" '.containerDefinitions[0].image = $IMAGE')
 
-UPDATED_TASK=$(aws --region us-east-2 ecs register-task-definition \
+UPDATED_TASK=$(aws --region eu-central-1 ecs register-task-definition \
     --cli-input-json "${TASK_DEFINITION}")
 
 NEW_REVISION=$(echo -n ${UPDATED_TASK} | jq '.taskDefinition.revision')
 
-REVISION_CONTENT='{\"version\": 0.0,\"Resources\": [{\"TargetService\": {\"Type\": \"AWS::ECS::Service\",\"Properties\": {\"TaskDefinition\": \"arn:aws:ecs:'"${AWS_REGION}"':'"${AWS_ACCOUNT_ID}"':task-definition/shippingdocker-'"${ENVIRONMENT}"'-app:'"${NEW_REVISION}"'\",\"LoadBalancerInfo\": {\"ContainerName\": \"shippingdocker-'"${ENVIRONMENT}"'-app\",\"ContainerPort\": 80},\"PlatformVersion\": \"1.4.0\"}}}]}'
+REVISION_CONTENT='{\"version\": 0.0,\"Resources\": [{\"TargetService\": {\"Type\": \"AWS::ECS::Service\",\"Properties\": {\"TaskDefinition\": \"arn:aws:ecs:'"${AWS_REGION}"':'"${AWS_ACCOUNT_ID}"':task-definition/lara-'"${ENVIRONMENT}"'-app:'"${NEW_REVISION}"'\",\"LoadBalancerInfo\": {\"ContainerName\": \"lara-'"${ENVIRONMENT}"'-app\",\"ContainerPort\": 80},\"PlatformVersion\": \"1.4.0\"}}}]}'
 
-aws --region us-east-2 deploy create-deployment \
-    --application-name AppECS-shippingdocker-${ENVIRONMENT}-cluster-app \
-    --deployment-group-name DgpECS-shippingdocker-${ENVIRONMENT}-cluster-app \
+aws --region eu-central-1 deploy create-deployment \
+    --application-name AppECS-lara-${ENVIRONMENT}-cluster-app \
+    --deployment-group-name DgpECS-lara-${ENVIRONMENT}-cluster-app \
     --revision '{"revisionType": "AppSpecContent", "appSpecContent": {"content": "'"${REVISION_CONTENT}"'"}}'
