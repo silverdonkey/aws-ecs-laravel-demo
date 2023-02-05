@@ -8,5 +8,6 @@ if [ $# -gt 0 ];then
     exec "$@"
 else
     # Otherwise start vite
-    npm install && npm run dev --host
+    npm install
+    exec npm run dev --host
 fi
