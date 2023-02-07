@@ -13,6 +13,7 @@
 Local Dev: ( optional ) login to docker instance an run commands directly or use the ./ctl script
 
 * docker exec -it aws-ecs-laravel-demo-app-1 bash
+
 Add package
 * composer require laravel/jetstream
 * php artisan jetstream:install livewire
