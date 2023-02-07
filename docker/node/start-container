@@ -9,5 +9,5 @@ if [ $# -gt 0 ];then
 else
     # Otherwise start vite
     npm install
-    exec npm run dev --host
+    exec npm run dev --host localhost
 fi
