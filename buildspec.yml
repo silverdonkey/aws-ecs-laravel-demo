@@ -9,15 +9,16 @@ phases:
     commands:
       - echo "Copy env props for CI"
       - aws s3 cp s3://myshippingdocker-secrets/env-ci .env
-      - ./vendor/bin/sail up -d && sleep 10
-      - ./vendor/bin/sail ps -a
-      - ./vendor/bin/sail composer install --no-interaction --prefer-dist --optimize-autoloader
-      - ./vendor/bin/sail artisan key:generate --no-ansi
-      - ./vendor/bin/sail artisan test
+      - ./ctl up -d && sleep 10
+      - ./ctl ps -a
+      - ./ctl composer install --no-interaction --prefer-dist --optimize-autoloader
+      - ./ctl artisan key:generate --no-ansi
+      - ./ctl npm install && ./ctl npm run build
+      - ./ctl test
   build:
     commands:
       - echo $CODEBUILD_WEBHOOK_TRIGGER
-      - echo "TODO: build for prod"
+      - echo "TODO build for prod"
   post_build:
     commands:
-      - echo "TODO: Deploy PROD"
+      - echo "TODO Deploy PROD"
