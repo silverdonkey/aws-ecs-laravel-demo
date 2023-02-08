@@ -1,0 +1,23 @@
+version: 0.2
+run-as: root
+phases:
+  install:
+    commands:
+      - echo "Authenticate against ECR"
+      - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
+  pre_build:
+    commands:
+      - echo "Copy env props for CI"
+      - aws s3 cp s3://myshippingdocker-secrets/env-ci .env
+      - ./vendor/bin/sail up -d && sleep 10
+      - ./vendor/bin/sail ps -a
+      - ./vendor/bin/sail composer install --no-interaction --prefer-dist --optimize-autoloader
+      - ./vendor/bin/sail artisan key:generate --no-ansi
+      - ./vendor/bin/sail artisan test
+  build:
+    commands:
+      - echo $CODEBUILD_WEBHOOK_TRIGGER
+      - echo "TODO: build for prod"
+  post_build:
+    commands:
+      - echo "TODO: Deploy PROD"
