@@ -4,11 +4,11 @@
 export CONTAINER_ENV=${CONTAINER_ENV:-local}
 export APP_ENV=${APP_ENV:-local}
 export APP_PORT=${APP_PORT:-8080}
-export DB_PORT=${DB_PORT:-3306}
-export DB_ROOT_PASS=${DB_ROOT_PASS:-secret}
-export DB_DATABASE=${DB_DATABASE:-homestead}
-export DB_USERNAME=${DB_USERNAME:-homestead}
-export DB_PASSWORD=${DB_PASSWORD:-secret}
+#export DB_PORT=${DB_PORT:-3306}
+#export DB_ROOT_PASS=${DB_ROOT_PASS:-secret}
+#export DB_DATABASE=${DB_DATABASE:-homestead}
+#export DB_USERNAME=${DB_USERNAME:-homestead}
+#export DB_PASSWORD=${DB_PASSWORD:-secret}
 
 
 # Default pseudo-TTY allocation for dev

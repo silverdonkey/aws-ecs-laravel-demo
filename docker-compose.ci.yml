@@ -32,13 +32,15 @@ services:
     ports:
      - "${DB_PORT}:3306"
     environment:
-      MYSQL_ROOT_PASSWORD: "${DB_ROOT_PASS}"
+      MYSQL_ROOT_PASSWORD: "${DB_PASSWORD}"
       MYSQL_DATABASE: "${DB_DATABASE}"
+      MYSQL_DATABASE_TEST: "${DB_DATABASE_TEST}"
       MYSQL_USER: "${DB_USERNAME}"
       MYSQL_PASSWORD: "${DB_PASSWORD}"
       MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
     volumes:
      - mysqldata:/var/lib/mysql
+     - './docker/app/create-test-database.sh:/docker-entrypoint-initdb.d/10-create-test-database.sh'
     networks:
      - laravel-net
 networks:
