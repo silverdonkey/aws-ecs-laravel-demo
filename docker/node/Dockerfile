@@ -1,4 +1,4 @@
-FROM node:14
+FROM node:18
 
 LABEL maintainer="dev@niko-consulting.de"
 
@@ -12,7 +12,7 @@ RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-RUN echo "fs.inotify.max_user_watches=524288" >> /etc/sysctl.conf
+#RUN echo "fs.inotify.max_user_watches=524288" >> /etc/sysctl.conf
 COPY start-container /usr/local/bin/start-container
 RUN chmod +x /usr/local/bin/start-container
 
