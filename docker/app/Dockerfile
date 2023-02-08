@@ -51,7 +51,7 @@ ENTRYPOINT ["start-container"]
 FROM base-image as prod-image
 WORKDIR /var/www/html
 
-COPY aws-ecr-laravel-demo.zip aws-ecr-laravel-demo.zip
-RUN unzip -q aws-ecr-laravel-demo.zip \
-    && rm aws-ecr-laravel-demo.zip \
+COPY aws-ecs-laravel-demo.zip aws-ecs-laravel-demo.zip
+RUN unzip -q aws-ecs-laravel-demo.zip \
+    && rm aws-ecs-laravel-demo.zip \
     && chown -R www-data:www-data /var/www/html
