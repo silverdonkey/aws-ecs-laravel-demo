@@ -7,6 +7,18 @@ phases:
       - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
   pre_build:
     commands:
+      - echo "Docker pull PROD-IMAGE container from ECR"
+      - docker pull $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/myshippingdocker/$ENVIRONMENT-base-image:latest
+      - docker tag $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/myshippingdocker/$ENVIRONMENT-base-image:latest aws-ecs-laravel-demo/app:latest
+      - echo "Docker pull TEST-NODE container from ECR"
+      - docker pull $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/myshippingdocker/test-node-image:latest
+      - docker tag $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/myshippingdocker/test-node-image:latest aws-ecs-laravel-demo/node:latest
+      - echo "Docker pull REDIS container from ECR"
+      - docker pull $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/myshippingdocker/redis:alpine
+      - docker tag $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/myshippingdocker/redis:alpine redis:alpine
+      - echo "Docker pull MYSQL container from ECR"
+      - docker pull $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/myshippingdocker/mysql:5.7
+      - docker tag $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/myshippingdocker/mysql:5.7 mysql:5.7
       - echo "Copy env props for CI"
       - aws s3 cp s3://myshippingdocker-secrets/env-ci .env
       - ./ctl up -d && sleep 10
