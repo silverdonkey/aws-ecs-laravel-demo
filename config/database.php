@@ -158,7 +158,7 @@ return [
                     'timeout' => 15,
                 ],
             ],
-
+            // may be not needed
             'sessions' => [
                 [
                     'url' => env('REDIS_URL'),
