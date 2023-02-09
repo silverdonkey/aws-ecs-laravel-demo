@@ -137,13 +137,25 @@ return [
         // #pro-tip, you can use the Cluster config even for single instances!
         'clusters' => [
             'default' => [
-                [ # cluster suppose multiple hosts in it, so wrapping each host in cluster into array make sense
+                [
                     'scheme'   => env('REDIS_SCHEME', 'tcp'),
                     'url' => env('REDIS_URL'),
                     'host' => env('REDIS_HOST', '127.0.0.1'),
                     'password' => env('REDIS_PASSWORD', null),
                     'port' => env('REDIS_PORT', '6379'),
                     'database' => env('REDIS_DB', '0'),
+                    'timeout' => 15,
+                ],
+            ],
+
+            'cache' => [
+                [
+                    'scheme'   => env('REDIS_SCHEME', 'tcp'),
+                    'url' => env('REDIS_URL'),
+                    'host' => env('REDIS_HOST', '127.0.0.1'),
+                    'password' => env('REDIS_PASSWORD', null),
+                    'port' => env('REDIS_PORT', '6379'),
+                    'database' => env('REDIS_CACHE_DB', '1'),
                     'timeout' => 15,
                 ],
             ],
