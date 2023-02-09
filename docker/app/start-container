@@ -1,21 +1,24 @@
 #!/usr/bin/env bash
 
-##
+# Run PHP-FPM as current user
+if [ ! -z "$WWWUID" ]; then
+    sed -i "s/user\ \=.*/user\ \= $WWWUID/g" /etc/php/8.2/fpm/pool.d/www.conf
+
+    # Set UID of user "ubuntu"
+    usermod -u $WWWUID ubuntu
+fi
+
 # Ensure /.composer exists and is writable
-#
 if [ ! -d /.composer ]; then
     mkdir /.composer
 fi
-
 chmod -R ugo+rw /.composer
 
-##
-# Run a command or start supervisord
-#
-if [ $# -gt 0 ];then
-    # If we passed a command, run it
-    exec "$@"
+# Run a command or supervisord
+if [ $# -gt 0 ]; then
+    # If we passed a command, run it as current user
+    exec gosu ubuntu "$@"
 else
     # Otherwise start supervisord
-    exec /usr/bin/supervisord
+    exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
 fi

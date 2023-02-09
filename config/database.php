@@ -121,29 +121,85 @@ return [
 
     'redis' => [
 
+        'cluster' => env('REDIS_CLUSTER_ENABLED', false),
+
         'client' => env('REDIS_CLIENT', 'phpredis'),
 
         'options' => [
             'cluster' => env('REDIS_CLUSTER', 'redis'),
-            'prefix' => env('REDIS_PREFIX', Str::slug(env('APP_NAME', 'laravel'), '_').'_database_'),
+            'prefix' => env('REDIS_PREFIX', Str::slug(env('APP_NAME', 'laravel'), '_') . '_database_'),
+            'parameters' => [ // Parameters provide defaults for the Connection Factory
+                'password' => env('REDIS_PASSWORD', null), // Redirects need PW for the other nodes
+                'scheme'   => env('REDIS_SCHEME', 'tcp'),  // Redirects also must match scheme
+            ],
+            'ssl'    => ['verify_peer' => false], // Since we dont have TLS cert to verify
         ],
 
-        'default' => [
-            'url' => env('REDIS_URL'),
-            'host' => env('REDIS_HOST', '127.0.0.1'),
-            'username' => env('REDIS_USERNAME'),
-            'password' => env('REDIS_PASSWORD'),
-            'port' => env('REDIS_PORT', '6379'),
-            'database' => env('REDIS_DB', '0'),
-        ],
+        // #pro-tip, you can use the Cluster config even for single instances!
+        // Redis clusters do not support more than one database => use 0
+        'clusters' => [
+            //connection used by the redis facade
+            'default' => [
+                [
+                    'scheme'   => env('REDIS_SCHEME', 'tcp'),
+                    'url' => env('REDIS_URL'),
+                    'host' => env('REDIS_HOST', '127.0.0.1'),
+                    'password' => env('REDIS_PASSWORD', null),
+                    'port' => env('REDIS_PORT', '6379'),
+                    //database set to 0 since only database 0 is supported in redis cluster
+                    // env('REDIS_DB', '0')
+                    'database' => 0,
+                    'timeout' => 15,
+                    //redis key prefix for this connection
+                    'prefix' => 'd:',
+                ],
+            ],
+            //connection used by the cache facade when redis cache is configured in config/cache.php
+            'cache' => [
+                [
+                    'url' => env('REDIS_URL'),
+                    'host' => env('REDIS_HOST', '127.0.0.1'),
+                    'password' => env('REDIS_PASSWORD', null),
+                    'port' => env('REDIS_PORT', '6379'),
+                    //database set to 0 since only database 0 is supported in redis cluster
+                    'database' => 0,
+                    'timeout' => 15,
+                    //redis key prefix for this connection
+                    'prefix' => 'c:',
+                ],
+            ],
+            //connection used by the session when redis cache is configured in config/session.php
+            'session' => [
+                [
+                    'url' => env('REDIS_URL'),
+                    'host' => env('REDIS_HOST', '127.0.0.1'),
+                    'password' => env('REDIS_PASSWORD', null),
+                    'port' => env('REDIS_PORT', '6379'),
+                    'database' => '0',
+                    'timeout' => 15,
+                    //redis key prefix for this connection
+                    'prefix' => 's:',
+                ],
+            ],
 
-        'cache' => [
-            'url' => env('REDIS_URL'),
-            'host' => env('REDIS_HOST', '127.0.0.1'),
-            'username' => env('REDIS_USERNAME'),
-            'password' => env('REDIS_PASSWORD'),
-            'port' => env('REDIS_PORT', '6379'),
-            'database' => env('REDIS_CACHE_DB', '1'),
+            //connection used by the queue when redis cache is configured in config/queue.php
+            'queue' => [
+                [
+                    'url' => env('REDIS_URL'),
+                    'host' => env('REDIS_HOST', '127.0.0.1'),
+                    'password' => env('REDIS_PASSWORD'),
+                    'port' => env('REDIS_PORT', '6379'),
+                    //database set to 0 since only database 0 is supported in redis cluster
+                    'database' => '0',
+                    //redis key prefix for this connection
+                    'prefix' => 'q:' . env('QUEUE_PREFIX_VERSION', ''),
+                ],
+            ],
+
+            'options' => [
+                'cluster' => env('REDIS_CLUSTER', 'redis'),
+            ],
+
         ],
 
     ],

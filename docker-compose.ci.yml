@@ -1,0 +1,53 @@
+version: '3.8'
+services:
+  app:
+    build:
+      context: ./docker/app
+      dockerfile: Dockerfile
+      target: base-image
+    image: aws-ecs-laravel-demo/app
+    ports:
+     - "${APP_PORT}:80"
+    volumes:
+     - .:/var/www/html
+    networks:
+     - laravel-net
+  node:
+    build:
+      context: ./docker/node
+      dockerfile: Dockerfile
+    image: aws-ecs-laravel-demo/node
+    volumes:
+     - .:/var/www/html
+    networks:
+     - laravel-net
+  redis:
+    image: redis:alpine
+    volumes:
+      - redisdata:/data
+    networks:
+     - laravel-net
+  mysql:
+    image: mysql:5.7
+    ports:
+     - "${DB_PORT}:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: "${DB_PASSWORD}"
+      MYSQL_DATABASE: "${DB_DATABASE}"
+      MYSQL_DATABASE_TEST: "${DB_DATABASE_TEST}"
+      MYSQL_USER: "${DB_USERNAME}"
+      MYSQL_PASSWORD: "${DB_PASSWORD}"
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+    volumes:
+     - mysqldata:/var/lib/mysql
+     - './docker/mysql/create-test-database.sh:/docker-entrypoint-initdb.d/10-create-test-database.sh'
+    networks:
+     - laravel-net
+networks:
+  laravel-net:
+    driver: "bridge"
+volumes:
+  mysqldata:
+    driver: "local"
+  redisdata:
+    driver: "local"

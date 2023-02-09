@@ -20,11 +20,12 @@ phases:
       - docker pull $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/myshippingdocker/mysql:5.7
       - docker tag $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/myshippingdocker/mysql:5.7 mysql:5.7
       - echo "Copy env props for CI"
-      - cp .env.ci .env
+      - aws s3 cp s3://myshippingdocker-secrets/env-ci .env
       - ./ctl up -d && sleep 10
       - ./ctl ps -a
       - ./ctl composer install --no-interaction --prefer-dist --optimize-autoloader
-      - ./ctl art key:generate --no-ansi
+      - ./ctl artisan key:generate --no-ansi
+      - ./ctl npm install && ./ctl npm run build
       - ./ctl test
   build:
     commands:
