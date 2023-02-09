@@ -6,9 +6,9 @@ set -e
 # Assumes we're running from root of project
 #
 
-#if [[ "$CODEBUILD_WEBHOOK_TRIGGER" != "branch/master" ]]; then
-#    exit 0
-#fi
+if [[ "$CODEBUILD_WEBHOOK_TRIGGER" != "branch/master" ]]; then
+    exit 0
+fi
 
 ###
 ## Install production assets, create project artifact
