@@ -23,7 +23,7 @@ fi
 aws s3 cp s3://myshippingdocker-secrets/env-prod .env
 
 git archive -o docker/app/aws-ecs-laravel-demo.zip --worktree-attributes $CODEBUILD_SOURCE_VERSION
-zip -urq docker/app/aws-ecs-laravel-demo.zip .env vendor public/mix-manifest.json public/css/app.css public/js/app.js
+zip -urq docker/app/aws-ecs-laravel-demo.zip .env vendor public/build
 
 
 ###
