@@ -1,3 +1,19 @@
+## About this PoC project
+Main Goals
+- Dockerize existing and new php (Laravel) based Web apps
+- Code base stored in GitHub repo
+- Use Docker for local development and in production
+- Provide a CI/CD Pipeline to build, test and deploy on AWS: CodeBuild
+    - RollingDeployment Strategy vs Blue-Green Deployment
+- Use Cloud native technologies and tools
+    - AWS S3 Service (for providing secure env config)
+    - AWS Elastic Container Registry - ECR private repositories
+    - AWS Elastic Container Service - ECS 
+    - AWS Load Balancing
+    - AWS RDS (MySql/MariaDB)
+    - AWS MemoryDB (Redis Cluster)
+
+
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
 <p align="center">
@@ -11,7 +27,7 @@
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
+- [Laravel Framework](https://laravel.com/docs/routing).
 - [Powerful dependency injection container](https://laravel.com/docs/container).
 - Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
 - Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
@@ -22,30 +38,40 @@ Laravel is a web application framework with expressive, elegant syntax. We belie
 Laravel is accessible, powerful, and provides tools required for large, robust applications.
 
 
-## Create project (using the docker container)
-* docker exec <container-name> sh -c "cd /var/www/html && composer create-project laravel/laravel <folder>"
+## Create project and start developing
+- [Create project](https://bootcamp.laravel.com/blade/installation#installation-via-docker)
+- Local Development: use Laravel Sail
 
-Local Dev: ( optional ) login to docker instance an run commands directly or use the ./ctl script
+### Notes for local development
 
-* docker exec -it aws-ecs-laravel-demo-app-1 bash
+Create Project using the ./ctl script. Then:
+- docker exec -it aws-ecs-laravel-demo-app-1 sh -c "cd /var/www/html && composer create-project laravel/laravel"
 
-Add package
-* composer require laravel/jetstream
-* php artisan jetstream:install livewire
+Local Dev:
+Login to docker instance an run commands directly
+- docker exec -it <container-name\> bash OR
+- use the ./ctl script: ./ctl <command\> OR
+- use Laravel Sail: sail <command\>
 
-Create a test
-* php artisan make:test RegisterTest
+We will be using Sail!
+
+Installing Laravel Breeze with Blade
+
+- sail composer require laravel/breeze --dev
+- sail php artisan breeze:install blade
+- (optional): if you want to use Redis with the predis driver
+  - sail composer require predis/predis
+
+Important note about Redis: if you configure AWS Cluster, only "predis" will work locally with Laravel-Cluster config. "phpredis" will work with Laravel-Cluster config against local Redis Server, which ist not a cluster!
+
 
 Verify
-* ./ctl config
-Run it
+- sail config
+- sail up -d
+- sail art migrate
+- sail npm install && sail npm run dev
+- open http://localhost:8080
 
-* ./ctl up -d
-* ./ctl art migrate
-* ./ctl npm install && ./ctl npm run dev
-* open <http://localhost:8080>
-
-Get Tests working
-
-* ./ctl exec mysql mysql -u root -p -e "create database app_testing charset utf8mb4;"
-* ./ctl exec mysql mysql -u root -p -e "grant all privileges on sdtesting.* to homestead@'%';"
+Bsp for creating Test-DB (dbname=testing, dbuser=homestead)
+- sail exec mysql mysql -u root -p -e "create database testing charset utf8mb4;"
+- sail exec mysql mysql -u root -p -e "grant all privileges on testing.* to homestead@'%';"
