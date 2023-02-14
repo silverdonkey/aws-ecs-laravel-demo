@@ -1,17 +1,17 @@
 ## About this PoC project
 Main Goals
 - Dockerize existing and new php (Laravel) based Web apps
-- Code base stored in GitHub repo
+- Code base and version control (GitHub)
 - Use Docker for local development and in production
-- Provide a CI/CD Pipeline to build, test and deploy on AWS: CodeBuild
-    - RollingDeployment Strategy vs Blue-Green Deployment
-- Use Cloud native technologies and tools
-    - AWS S3 Service (for providing secure env config)
-    - AWS Elastic Container Registry - ECR private repositories
-    - AWS Elastic Container Service - ECS 
-    - AWS Load Balancing
-    - AWS RDS (MySql/MariaDB)
-    - AWS MemoryDB (Redis Cluster)
+- Automate deployments: CI/CD Pipeline to build, test and deploy in the Cloud (GitHub Actions, AWS CodeBuild)
+  - Evaluate RollingDeployment Strategy vs Blue-Green Deployment
+- Use Cloud native technologies and tools (AWS)
+  - S3 Service (storage, env config)
+  - Elastic Container Registry - ECR (private repositories)
+  - Elastic Container Service - ECS (container orchestration)
+  - Load Balancing
+  - MySql/MariaDB (RDS)
+  - Redis cluster, caching, session management, queueing (MemoryDB Cluster)
 
 
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
