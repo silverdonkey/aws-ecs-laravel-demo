@@ -47,7 +47,7 @@ Laravel is accessible, powerful, and provides tools required for large, robust a
 Create Project using the ./ctl script. Then:
 
 ```
-> docker exec -it aws-ecs-laravel-demo-app-1 sh -c "cd /var/www/html && composer create-project laravel/laravel"
+docker exec -it aws-ecs-laravel-demo-app-1 sh -c "cd /var/www/html && composer create-project laravel/laravel"
 ```
 
 Local Dev:
@@ -67,10 +67,14 @@ sail php artisan breeze:install blade
 # sail composer require predis/predis
 ```
 
-Important note about Redis: if you configure AWS Cluster, only "predis" will work locally with Laravel-Cluster config. "phpredis" will work with Laravel-Cluster config against local Redis Server, which ist not a cluster!
+> **Warning**
+>
+> Important note about Redis
+>
+> If you configure AWS Cluster, only "predis" will work locally with Laravel-Cluster config. "phpredis" will NOT work with Laravel-Cluster config against local Redis Server, which ist not a cluster! Check out the sources at 'config/database.php'.
 
 
-Verify
+Verify & Run 
 
 ```
 sail config
@@ -80,7 +84,7 @@ sail npm install && sail npm run dev
 # open http://localhost:8080
 ```
 
-Bsp for creating Test-DB (dbname=testing, dbuser=homestead)
+For creating Test-DB (dbname=testing, dbuser=homestead):
 
 ```
 sail exec mysql mysql -u root -p -e "create database testing charset utf8mb4;"
