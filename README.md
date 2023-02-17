@@ -45,7 +45,10 @@ Laravel is accessible, powerful, and provides tools required for large, robust a
 ### Notes for local development
 
 Create Project using the ./ctl script. Then:
-- docker exec -it aws-ecs-laravel-demo-app-1 sh -c "cd /var/www/html && composer create-project laravel/laravel"
+
+```
+> docker exec -it aws-ecs-laravel-demo-app-1 sh -c "cd /var/www/html && composer create-project laravel/laravel"
+```
 
 Local Dev:
 Login to docker instance an run commands directly
@@ -57,21 +60,29 @@ We will be using Sail!
 
 Installing Laravel Breeze with Blade
 
-- sail composer require laravel/breeze --dev
-- sail php artisan breeze:install blade
-- (optional): if you want to use Redis with the predis driver
-  - sail composer require predis/predis
+```
+sail composer require laravel/breeze --dev
+sail php artisan breeze:install blade
+# (optional): if you want to use Redis with the predis driver
+# sail composer require predis/predis
+```
 
 Important note about Redis: if you configure AWS Cluster, only "predis" will work locally with Laravel-Cluster config. "phpredis" will work with Laravel-Cluster config against local Redis Server, which ist not a cluster!
 
 
 Verify
-- sail config
-- sail up -d
-- sail art migrate
-- sail npm install && sail npm run dev
-- open http://localhost:8080
+
+```
+sail config
+sail up -d
+sail art migrate
+sail npm install && sail npm run dev
+# open http://localhost:8080
+```
 
 Bsp for creating Test-DB (dbname=testing, dbuser=homestead)
-- sail exec mysql mysql -u root -p -e "create database testing charset utf8mb4;"
-- sail exec mysql mysql -u root -p -e "grant all privileges on testing.* to homestead@'%';"
+
+```
+sail exec mysql mysql -u root -p -e "create database testing charset utf8mb4;"
+sail exec mysql mysql -u root -p -e "grant all privileges on testing.* to homestead@'%';"
+```
